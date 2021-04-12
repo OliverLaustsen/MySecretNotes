@@ -116,7 +116,7 @@ def notes():
 def login():
     error = ""
     if request.method == 'POST':
-        username = request.form['username']
+        username = sanitize(request.form['username'])
         password = request.form['password']
         db = connect_db()
         c = db.cursor()
