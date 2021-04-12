@@ -1,7 +1,7 @@
 import json, sqlite3, click, functools, os, hashlib,time, random, sys
 from flask import Flask, current_app, g, session, redirect, render_template, url_for, request
 
-
+import html
 
 
 ### DATABASE FUNCTIONS ###
@@ -39,7 +39,14 @@ INSERT INTO notes VALUES(null,2,"1993-09-23 12:10:10","i want lunch pls",1234567
 
 """)
 
-
+def sanitize(input):
+    if(isinstance(input, str)):
+        out = html.escape(input)
+    else:
+        out = []
+        for s in input:
+            out.append(html.escape(s))
+    return out
 
 ### APPLICATION SETUP ###
 app = Flask(__name__)
