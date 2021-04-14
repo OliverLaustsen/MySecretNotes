@@ -8,7 +8,14 @@ import time
 import random
 import sys
 
-from flask import Flask, current_app, g, session, redirect, render_template, url_for, request
+import Flask from flask
+import current_app
+import g
+import session
+import redirect
+import render_template
+import url_for
+import request
 import hashlib
 import binascii
 import os
@@ -75,7 +82,7 @@ def hash_password(password):
     return (salt + pwdhash).decode('ascii')
 
 
-def verify_password(stored_password, provided_password):
+def verify_hashed_password(stored_password, provided_password):
     """Verify a stored password against one provided by user"""
     salt = stored_password[:64]
     stored_password = stored_password[64:]
@@ -86,8 +93,29 @@ def verify_password(stored_password, provided_password):
     pwdhash = binascii.hexlify(pwdhash).decode('ascii')
     return pwdhash == stored_password
 
+### PASSWORD STRENGTH FUNCTION ###
 
-### APPLICATION SETUP ###
+
+def strength_check_of_password(password):
+    specialSymbols = ['$', '!', '@', '#', '%', '/',
+                      '(', ')', '[', ']', '{', '}', '£', '<', '>', '=', '.', ':', ',', ';', '-', '_']
+    if(len(password) < 6):
+        return False
+    if not any(char.isdigit() for char in password):
+        return False
+
+    if not any(char.isupper() for char in password):
+        return False
+
+    if not any(char.islower() for char in password):
+        return False
+
+    if not any(char in specialSymbols for char in password):
+        return False
+    return True
+
+
+    ### APPLICATION SETUP ###
 app = Flask(__name__)
 app.database = "db.sqlite3"
 app.secret_key = os.urandom(32)
@@ -171,7 +199,7 @@ def login():
         result = c.fetchall()
 
         if len(result) > 0:
-            if(not verify_password(result[0][2], password)):
+            if(not verify_hashed_password(result[0][2], password)):
                 error = "You entered a wrong password"
                 return render_template('login.html', error=error)
             else:
@@ -192,6 +220,11 @@ def register():
 
         username = request.form['username']
         password = request.form['password']
+
+        if(not strength_check_of_password(password)):
+            # maybe add more info - consider letting strength function return a tuple of (bool, string) to pass the correct error message.
+            usererror = "password is to weak"
+            return render_template('register.html', usererror=usererror, passworderror=passworderror)
 
         # Add check on password i.e. uppercase and length.
         # if(len(password) < 8):
