@@ -8,7 +8,14 @@ import time
 import random
 import sys
 
-from flask import Flask, current_app, g, session, redirect, render_template, url_for, request
+import Flask from flask
+import current_app
+import g
+import session
+import redirect
+import render_template
+import url_for
+import request
 import hashlib
 import binascii
 import os
@@ -162,22 +169,24 @@ def login():
     error = ""
     if request.method == 'POST':
         username = sanitize(request.form['username'])
-        password = sanitize(request.form['password'])
+        password = request.form['password']  # Maybe sanitize password?
         db = connect_db()
         c = db.cursor()
-        statement = "SELECT * FROM users WHERE username = '%s' AND password = '%s';" % (
-            username, password)
+        # No need to find password with the new hashing.
+        statement = "SELECT * FROM users WHERE username = '%s'" % (username)
         c.execute(statement)
         result = c.fetchall()
 
         if len(result) > 0:
-            session.clear()
-            session['logged_in'] = True
-            session['userid'] = result[0][0]
-            session['username'] = result[0][1]
-            return redirect(url_for('index'))
-        else:
-            error = "Wrong username or password!"
+            if(not verify_password(result[0][2], password)):
+                error = "You entered a wrong password"
+                return render_template('login.html', error=error)
+            else:
+                session.clear()
+                session['logged_in'] = True
+                session['userid'] = result[0][0]
+                session['username'] = result[0][1]
+                return redirect(url_for('index'))
     return render_template('login.html', error=error)
 
 
@@ -190,9 +199,21 @@ def register():
 
         username = request.form['username']
         password = request.form['password']
+
+        # Add check on password i.e. uppercase and length.
+        # if(len(password) < 8):
+        #    usererror = "password is too short"
+        #    return render_template('regiser.html', usererror=usererror, passworderror=passworderror)
+
+        # if(someCheckingFunction(password)):
+        #    usererror = "password does not contain x"
+        #    return render_template('regiser.html', usererror=usererror, passworderror=passworderror)
+
+        password = hash_password(password)
         db = connect_db()
         c = db.cursor()
-        pass_statement = """SELECT * FROM users WHERE password = '%s';""" % password
+
+        pass_statement = """SELECT * FROM users WHERE password = '%s';""" % password  # Maybe not needed? same password for different users is fine?
         user_statement = """SELECT * FROM users WHERE username = '%s';""" % username
         c.execute(pass_statement)
         if(len(c.fetchall()) > 0):
