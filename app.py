@@ -169,7 +169,7 @@ def login():
     error = ""
     if request.method == 'POST':
         username = sanitize(request.form['username'])
-        password = request.form['password']
+        password = sanitize(request.form['password'])
         db = connect_db()
         c = db.cursor()
         statement = "SELECT * FROM users WHERE username = '%s' AND password = '%s';" % (
