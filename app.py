@@ -162,7 +162,7 @@ def login():
     error = ""
     if request.method == 'POST':
         username = sanitize(request.form['username'])
-        password = request.form['password']  # Maybe sanitize password?
+        password = sanitize(request.form['password'])
         db = connect_db()
         c = db.cursor()
         # No need to find password with the new hashing.
