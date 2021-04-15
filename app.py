@@ -8,18 +8,10 @@ import time
 import random
 import sys
 
-import Flask from flask
-import current_app
-import g
-import session
-import redirect
-import render_template
-import url_for
-import request
+from flask import Flask, current_app, g, session, redirect, render_template, url_for, request
 import hashlib
 import binascii
 import os
-
 import html
 
 
@@ -113,6 +105,7 @@ def strength_check_of_password(password):
     if not any(char in specialSymbols for char in password):
         return False
     return True
+
 
     ### APPLICATION SETUP ###
 app = Flask(__name__)
