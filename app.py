@@ -114,7 +114,6 @@ def strength_check_of_password(password):
         return False
     return True
 
-
     ### APPLICATION SETUP ###
 app = Flask(__name__)
 app.database = "db.sqlite3"
@@ -225,15 +224,6 @@ def register():
             # maybe add more info - consider letting strength function return a tuple of (bool, string) to pass the correct error message.
             usererror = "password is to weak"
             return render_template('register.html', usererror=usererror, passworderror=passworderror)
-
-        # Add check on password i.e. uppercase and length.
-        # if(len(password) < 8):
-        #    usererror = "password is too short"
-        #    return render_template('regiser.html', usererror=usererror, passworderror=passworderror)
-
-        # if(someCheckingFunction(password)):
-        #    usererror = "password does not contain x"
-        #    return render_template('regiser.html', usererror=usererror, passworderror=passworderror)
 
         password = hash_password(password)
         db = connect_db()
