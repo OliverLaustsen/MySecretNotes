@@ -93,6 +93,7 @@ def strength_check_of_password(password):
                       '(', ')', '[', ']', '{', '}', '£', '<', '>', '=', '.', ':', ',', ';', '-', '_']
     if(len(password) < 6):
         return False
+    '''
     if not any(char.isdigit() for char in password):
         return False
 
@@ -103,7 +104,8 @@ def strength_check_of_password(password):
         return False
 
     if not any(char in specialSymbols for char in password):
-        return False
+        return False 
+    '''
     return True
 
 
@@ -131,6 +133,9 @@ def index():
     else:
         return redirect(url_for('notes'))
 
+@app.route("/files/")
+def files():
+    return render_template('files.html')
 
 @app.route("/notes/", methods=('GET', 'POST'))
 @login_required
@@ -215,7 +220,7 @@ def register():
 
         if(not strength_check_of_password(password)):
             # maybe add more info - consider letting strength function return a tuple of (bool, string) to pass the correct error message.
-            usererror = "password is to weak"
+            usererror = "password is too weak"
             return render_template('register.html', usererror=usererror, passworderror=passworderror)
 
         password = hash_password(password)
