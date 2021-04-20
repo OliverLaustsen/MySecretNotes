@@ -89,23 +89,8 @@ def verify_hashed_password(stored_password, provided_password):
 
 
 def strength_check_of_password(password):
-    specialSymbols = ['$', '!', '@', '#', '%', '/',
-                      '(', ')', '[', ']', '{', '}', '£', '<', '>', '=', '.', ':', ',', ';', '-', '_']
     if(len(password) < 6):
         return False
-    '''
-    if not any(char.isdigit() for char in password):
-        return False
-
-    if not any(char.isupper() for char in password):
-        return False
-
-    if not any(char.islower() for char in password):
-        return False
-
-    if not any(char in specialSymbols for char in password):
-        return False 
-    '''
     return True
 
 
